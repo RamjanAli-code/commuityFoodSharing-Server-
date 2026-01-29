@@ -6,7 +6,8 @@
         "express.js": "^1.0.0",
         "firebase-admin": "^13.6.0",
         "jsonwebtoken": "^9.0.2",
-        "mongodb": "^7.0.0"
+        "mongodb": "^7.0.0",
+        "vercel": "^50.8.1"
     },
     "name": "communityfoodsharing",
     "version": "1.0.0",
