@@ -68,6 +68,37 @@ async function run() {
         res.send(result);
     });
 
+    app.post("/food-requests", verifyToken, async(req, res) => {
+        try {
+            const { foodId, location, reason, contact } = req.body;
+
+            if (!foodId || !location || !reason || !contact) {
+                return res.status(400).send({ message: "Missing required fields" });
+            }
+
+            const requestDoc = {
+                foodId: new ObjectId(foodId),
+                location,
+                reason,
+                contact,
+                status: "pending",
+                user: {
+                    email: req.user.email,
+                    name: req.user.name,
+                    photoURL: req.user.photoURL,
+                    uid: req.user.uid,
+                },
+                createdAt: new Date(),
+            };
+
+            const result = await foodRequestsCollection.insertOne(requestDoc);
+            console.log("Inserted Request:", result.insertedId);
+            res.send({ success: true, insertedId: result.insertedId });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({ message: "Server error" });
+        }
+    });
     app.get("/available-foods", async(req, res) => {
         const foods = await foodsCollection
             .find({ food_status: "Available" })
