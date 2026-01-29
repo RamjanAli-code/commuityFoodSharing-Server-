@@ -99,6 +99,30 @@ async function run() {
             res.status(500).send({ message: "Server error" });
         }
     });
+
+    app.get("/my-food-requests", verifyToken, async(req, res) => {
+        const email = req.user.email;
+        const requests = await foodRequestsCollection.aggregate([
+            { $match: { "user.email": email } },
+            {
+                $lookup: {
+                    from: "foods",
+                    localField: "foodId",
+                    foreignField: "_id",
+                    as: "food"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$food",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            { $sort: { createdAt: -1 } }
+        ]).toArray();
+        res.send(requests);
+    });
+
     app.get("/available-foods", async(req, res) => {
         const foods = await foodsCollection
             .find({ food_status: "Available" })
