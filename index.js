@@ -73,7 +73,7 @@ async function run() {
             const { foodId, location, reason, contact } = req.body;
 
             if (!foodId || !location || !reason || !contact) {
-                return res.status(400).send({ message: "Missing required fields" });
+                return res.status(400).send({ message: "Missing required field" });
             }
 
             const requestDoc = {
