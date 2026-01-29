@@ -218,6 +218,16 @@ async function run() {
         res.send({ success: true });
     });
 
+    app.put("/food-requests/:id/reject", verifyToken, async(req, res) => {
+        const requestId = req.params.id;
+        const request = await foodRequestsCollection.findOne({ _id: new ObjectId(requestId) });
+        if (!request) return res.status(404).send({ message: "Request not found" });
+        const food = await foodsCollection.findOne({ _id: request.foodId });
+        if (food.donator.email !== req.user.email)
+            return res.status(403).send({ message: "Forbidden" });
+        await foodRequestsCollection.updateOne({ _id: new ObjectId(requestId) }, { $set: { status: "rejected" } });
+        res.send({ success: true });
+    });
     app.delete("/foods/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const existingFood = await foodsCollection.findOne({ _id: new ObjectId(id) });
