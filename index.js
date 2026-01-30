@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
     res.send("Food Sharing Server Running");
 });
 async function run() {
-    //await client.connect();
+    await client.connect();
     console.log("MongoDB Connected Successfully");
     const db = client.db("foodDB");
     const foodsCollection = db.collection("foods");
